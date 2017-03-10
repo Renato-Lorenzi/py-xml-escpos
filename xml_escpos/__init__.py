@@ -8,7 +8,6 @@ import re
 import xml.etree.ElementTree as ET
 from escpos.constants import *
 
-from pyescpos import barcode
 
 TXT_DOUBLE = '\x1b\x21\x30'  # Double height & Width
 
@@ -470,6 +469,8 @@ class DarumaXMLPrinter(DefaultXMLPrinter):
 
 class EscPosXMLPrinter(DefaultXMLPrinter):
     def __init__(self, printer):
+        self.printer = printer
+        self.printer.charcode("MULTILINGUAL")
         super(EscPosXMLPrinter, self).__init__(printer)
         self.cmds = {
             # translation from styles to escpos commands
@@ -540,6 +541,9 @@ class EscPosXMLPrinter(DefaultXMLPrinter):
 
     def barcode(self, code, encoding, **kwargs):
         self.printer.barcode(code, encoding, **kwargs)
+
+    def cut(self):
+        self.printer.cut()
 
 
 if __name__ == "__main__":
