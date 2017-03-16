@@ -10,6 +10,8 @@ from escpos.constants import *
 
 
 TXT_DOUBLE = '\x1b\x21\x30'  # Double height & Width
+BARCODE_DOUBLE_WIDTH = 2
+BARCODE_HRI_TOP = 1
 
 try:
     import jcconv
@@ -292,7 +294,7 @@ def receipt(printer, xml):
             kwargs['width'] = int(elem.attrib['width'])
         if 'pos' in elem.attrib:
             kwargs['pos'] = elem.attrib['pos']
-
+    print printer.barcode
         printer.barcode(strclean(elem.text), elem.attrib['encoding'], **kwargs)
         serializer.end_entity()
 
@@ -442,14 +444,14 @@ class DarumaXMLPrinter(DefaultXMLPrinter):
         super(DarumaXMLPrinter, self).__init__(printer)
         printer.justify_center()
     def text(self, text):
-        self.printer.textout(text)
+        self.printer.textout(text.encode('iso-8859-1'))
 
     def barcode(self, code, encoding, height=64, width=3, pos="BELOW", align_ct=True):
         """ Por enquanto suporta apenas o EAN13 """
         self.printer.ean13(code + "0",
                            barcode_height=height,  # ~15mm (~9/16"),
-                           barcode_width=barcode.BARCODE_DOUBLE_WIDTH,
-                           barcode_hri=barcode.BARCODE_HRI_TOP)
+                           barcode_width=BARCODE_DOUBLE_WIDTH,
+                           barcode_hri=BARCODE_HRI_TOP)
 
     def cut(self):
         self.printer.text("\n\n\n\n\n")
@@ -544,15 +546,3 @@ class EscPosXMLPrinter(DefaultXMLPrinter):
 
     def cut(self):
         self.printer.cut()
-
-
-if __name__ == "__main__":
-    from pyescpos.serial import SerialConnection
-    from pyescpos.impl.daruma import DR700
-
-    conn = SerialConnection.create('COM4:115200,8,1,N')
-    p = DR700(conn)
-    p.init()
-    printer = DarumaXMLPrinter(p)
-
-    receipt(printer, u"<p>CloudPark Soluções</p>")
