@@ -294,7 +294,7 @@ def receipt(printer, xml):
             kwargs['width'] = int(elem.attrib['width'])
         if 'pos' in elem.attrib:
             kwargs['pos'] = elem.attrib['pos']
-    print printer.barcode
+        print printer.barcode
         printer.barcode(strclean(elem.text), elem.attrib['encoding'], **kwargs)
         serializer.end_entity()
 
