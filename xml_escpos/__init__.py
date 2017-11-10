@@ -287,14 +287,14 @@ def receipt(printer, xml):
 
     def print_barcode(stylestack, serializer, elem):
         serializer.start_block(stylestack)
-        kwargs = {'align_ct': elem.attrib['align_ct'] != 'on' if 'align_ct' in elem.attrib else False}
+        kwargs = {'align_ct': elem.attrib['align_ct'] == 'on' if 'align_ct' in elem.attrib else False}
         if 'height' in elem.attrib:
             kwargs['height'] = int(elem.attrib['height'])
         if 'width' in elem.attrib:
             kwargs['width'] = int(elem.attrib['width'])
         if 'pos' in elem.attrib:
-            kwargs['pos'] = elem.attrib['pos']
-    print printer.barcode
+            kwargs['pos'] = elem.attrib['pos']        
+
         printer.barcode(strclean(elem.text), elem.attrib['encoding'], **kwargs)
         serializer.end_entity()
 
