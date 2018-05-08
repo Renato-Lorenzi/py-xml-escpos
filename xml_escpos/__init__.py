@@ -12,6 +12,8 @@ from escpos.constants import *
 TXT_DOUBLE = '\x1b\x21\x30'  # Double height & Width
 BARCODE_DOUBLE_WIDTH = 2
 BARCODE_HRI_TOP = 1
+TXT_COLOR_BLACK = ESC + b'\x72\x00'
+TXT_COLOR_RED = ESC + b'\x72\x01'
 
 try:
     import jcconv
@@ -405,8 +407,6 @@ def receipt(printer, xml):
     if 'sheet' in root.attrib and root.attrib['sheet'] == 'slip':
         printer.set_sheet_slip_mode()
         printer.slip_sheet_mode = True
-    else:
-        printer.set_sheet_roll_mode()
 
     print_elem(stylestack, serializer, root)
 
