@@ -545,3 +545,6 @@ class EscPosXMLPrinter(DefaultXMLPrinter):
 
     def cut(self):
         self.printer.cut()
+
+    def close(self):
+        self.printer.close()
