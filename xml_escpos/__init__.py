@@ -436,12 +436,16 @@ class DefaultXMLPrinter(object):
     def cut(self):
         pass
 
+    def cashdraw(self):
+        pass
+
 
 class DarumaXMLPrinter(DefaultXMLPrinter):
 
     def __init__(self, printer):
         super(DarumaXMLPrinter, self).__init__(printer)
         printer.justify_center()
+
     def text(self, text):
         self.printer.textout(text.encode('iso-8859-1'))
 
@@ -466,6 +470,9 @@ class DarumaXMLPrinter(DefaultXMLPrinter):
         else:
             self.printer.set_condensed(False)
             self.printer.set_expanded(False)
+
+    def cashdraw(self):
+        self.printer.device.write('\x1B\x70')
 
 
 class EscPosXMLPrinter(DefaultXMLPrinter):
@@ -553,3 +560,6 @@ class EscPosXMLPrinter(DefaultXMLPrinter):
         open('test.png', 'wb').write(base64.b64decode(img_src))
         self.printer.image("test.png")
 
+    def cashdraw(self):
+        self.printer.cashdraw(2)
+        self.printer.cashdraw(5)
