@@ -7,7 +7,7 @@ import math
 import re
 import xml.etree.ElementTree as ET
 from escpos.constants import *
-
+import base64
 
 TXT_DOUBLE = '\x1b\x21\x30'  # Double height & Width
 BARCODE_DOUBLE_WIDTH = 2
@@ -385,7 +385,7 @@ def receipt(printer, xml):
             serializer.linebreak()
 
         elif elem.tag == 'img':
-            if 'src' in elem.attrib and 'data:' in elem.attrib['src']:
+            if 'src' in elem.attrib:
                 printer.print_base64_image(elem.attrib['src'])
 
         elif elem.tag == 'barcode' and 'encoding' in elem.attrib:
@@ -548,3 +548,8 @@ class EscPosXMLPrinter(DefaultXMLPrinter):
 
     def close(self):
         self.printer.close()
+
+    def print_base64_image(self, img_src):
+        open('test.png', 'wb').write(base64.b64decode(img_src))
+        self.printer.image("test.png")
+
