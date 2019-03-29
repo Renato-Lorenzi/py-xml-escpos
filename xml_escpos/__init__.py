@@ -8,6 +8,7 @@ import re
 import xml.etree.ElementTree as ET
 from escpos.constants import *
 import base64
+import tempfile
 
 TXT_DOUBLE = '\x1b\x21\x30'  # Double height & Width
 BARCODE_DOUBLE_WIDTH = 2
@@ -557,8 +558,12 @@ class EscPosXMLPrinter(DefaultXMLPrinter):
         self.printer.close()
 
     def print_base64_image(self, img_src):
-        open('test.png', 'wb').write(base64.b64decode(img_src))
-        self.printer.image("test.png")
+        temp_file = tempfile.NamedTemporaryFile()
+        try:
+            open(temp_file.name, 'wb').write(base64.b64decode(img_src))
+            self.printer.image(temp_file.name)
+        finally:
+            temp_file.close()
 
     def cashdraw(self):
         self.printer.cashdraw(2)
