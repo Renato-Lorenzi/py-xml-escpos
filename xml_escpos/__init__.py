@@ -300,6 +300,16 @@ def receipt(printer, xml):
         printer.barcode(strclean(elem.text), elem.attrib['encoding'], **kwargs)
         serializer.end_entity()
 
+    def print_qr(stylestack, serializer, elem):
+        serializer.start_block(stylestack)
+        kwargs = {}
+        if 'ec_level' in elem.attrib:
+            kwargs['ec'] = int(elem.attrib['ec_level'])
+        if 'pixel_size' in elem.attrib:
+            kwargs['size'] = int(elem.attrib['pixel_size'])
+        printer.qr(strclean(elem.text), **kwargs)
+        serializer.end_entity()
+
     def print_elem(stylestack, serializer, elem, indent=0):
 
         elem_styles = {
@@ -392,6 +402,9 @@ def receipt(printer, xml):
         elif elem.tag == 'barcode' and 'encoding' in elem.attrib:
             print_barcode(stylestack, serializer, elem)
 
+        elif elem.tag == 'qr':
+            print_qr(stylestack, serializer, elem)
+
         elif elem.tag == 'cut':
             printer.cut()
         elif elem.tag == 'partialcut':
@@ -434,6 +447,9 @@ class DefaultXMLPrinter(object):
     def barcode(self, code, encoding, height=64, width=3, pos="BELOW", align_ct=True):
         pass
 
+    def qr(self, content, ec=0, size=6, model=2, native=False):
+        pass
+
     def cut(self):
         pass
 
@@ -456,6 +472,9 @@ class DarumaXMLPrinter(DefaultXMLPrinter):
                            barcode_height=height,  # ~15mm (~9/16"),
                            barcode_width=BARCODE_DOUBLE_WIDTH,
                            barcode_hri=BARCODE_HRI_TOP)
+
+    def qr(self, content, ec=0, size=6, model=2, native=False):
+        pass
 
     def cut(self):
         self.printer.text("\n\n\n\n\n")
@@ -550,6 +569,9 @@ class EscPosXMLPrinter(DefaultXMLPrinter):
 
     def barcode(self, code, encoding, **kwargs):
         self.printer.barcode(code, encoding, **kwargs)
+
+    def qr(self, content, **kwargs):
+        self.printer.qr(content, **kwargs)
 
     def cut(self):
         self.printer.cut()
